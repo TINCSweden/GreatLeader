@@ -2,11 +2,14 @@ package mygame;
 
 import com.jme3.app.SimpleApplication;
 import com.jme3.material.Material;
+import com.jme3.material.RenderState.BlendMode;
 import com.jme3.math.ColorRGBA;
 import com.jme3.math.Vector3f;
 import com.jme3.renderer.RenderManager;
+import com.jme3.renderer.queue.RenderQueue.Bucket;
 import com.jme3.scene.Geometry;
 import com.jme3.scene.shape.Box;
+import com.jme3.texture.Texture;
 import com.jme3.ui.Picture;
 import gui.GameGUI;
 
@@ -28,24 +31,28 @@ public class Main extends SimpleApplication {
         pic.setWidth(32);
         pic.setHeight(32);
         pic.setPosition(settings.getWidth()/4, settings.getHeight()/4);
-        guiNode.attachChild(pic);
+        rootNode.attachChild(pic);
         */
         GameGUI gui_display = new GameGUI (assetManager,
                                            inputManager,
                                            audioRenderer,
                                            guiViewPort);
         
-        Box b = new Box(Vector3f.ZERO, 1, 1, 1);
-        Geometry geom = new Geometry("Box", b);
-
-        Material mat = new Material(assetManager, "Common/MatDefs/Misc/Unshaded.j3md");
-        mat.setColor("Color", ColorRGBA.Blue);
-        geom.setMaterial(mat);
+        Box cube2Mesh = new Box( 1f,1f,0.01f);
+        Geometry cube2Geo = new Geometry("window frame", cube2Mesh);
+        Material cube2Mat = new Material(assetManager, 
+            "Common/MatDefs/Misc/Unshaded.j3md");
+        cube2Mat.setTexture("ColorMap", 
+            assetManager.loadTexture("Textures/ColonialMarines_4.png"));
+        cube2Mat.getAdditionalRenderState().setBlendMode(BlendMode.Alpha);
+        cube2Geo.setQueueBucket(Bucket.Transparent);
+        cube2Geo.setMaterial(cube2Mat);
+        rootNode.attachChild(cube2Geo);
         
         flyCam.setEnabled(false);
         flyCam.setDragToRotate(true);
 
-        rootNode.attachChild(geom);
+        //rootNode.attachChild(geom);
     }
 
     @Override
