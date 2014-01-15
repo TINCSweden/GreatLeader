@@ -44,30 +44,64 @@ public class Main extends SimpleApplication {
                                            audioRenderer,
                                            guiViewPort);
         
-        Texture tex = new Texture2D(32, 32, Image.Format.ABGR8);
-        ByteBuffer buf = ByteBuffer.allocateDirect(32 * 32 * 4);
+        
+        ByteBuffer final_buf = ByteBuffer.allocateDirect(4 * 32 * 32 * 4);
         
         Texture tex_grass = assetManager.loadTexture("Textures/grass.png");
+        Texture tex_tree = assetManager.loadTexture("Textures/tree.png");
+        Texture tex_rock = assetManager.loadTexture("Textures/rock.png");
+        Texture tex_water = assetManager.loadTexture("Textures/water.png");
         
         System.out.println("Image format: " + tex_grass.getImage().getFormat().toString());
         
         ByteBuffer grass_buffer = tex_grass.getImage().getData(0);
+        ByteBuffer tree_buffer = tex_tree.getImage().getData(0);
+        ByteBuffer rock_buffer = tex_rock.getImage().getData(0);
+        ByteBuffer water_buffer = tex_water.getImage().getData(0);
         
-        /*byte color = (byte)75;
-        
-        for (int i = 0; i < buf.limit(); ++i) {
-            buf.put(color++);
-        }*/
-
-        //buf.flip();
         grass_buffer.rewind();
-        buf.put(grass_buffer);
-        buf.flip();
+        tree_buffer.rewind();
+        rock_buffer.rewind();
+        water_buffer.rewind();
         
-        Image img = new Image(Image.Format.ABGR8, 32, 32, buf);
+        for (int i = 0; i < 32; ++i) {
+            for (int j = 0; j < 32*4; ++j) {
+                final_buf.put(grass_buffer.get());
+            }
+            for (int j = 0; j < 32*4; ++j) {
+                final_buf.put(tree_buffer.get());
+            }
+        }
+        for (int i = 0; i < 32; ++i) {
+            for (int j = 0; j < 32*4; ++j) {
+                final_buf.put(rock_buffer.get());
+            }
+            for (int j = 0; j < 32*4; ++j) {
+                final_buf.put(water_buffer.get());
+            }
+        }
         
         
-        tex.setImage(img);
+        //buf.flip();
+        
+        
+        //final_buf.put(grass_buffer);
+        
+        
+        //final_buf.put(tree_buffer);
+        
+        
+        //final_buf.put(rock_buffer);
+        
+        
+        //final_buf.put(water_buffer);
+        
+        final_buf.flip();
+        
+        Image final_img = new Image(Image.Format.ABGR8, 64, 64, final_buf);
+        
+        Texture final_tex = new Texture2D(64, 64, Image.Format.ABGR8);
+        final_tex.setImage(final_img);
         
         
         
@@ -75,7 +109,7 @@ public class Main extends SimpleApplication {
         Geometry cube2Geo = new Geometry("window frame", cube2Mesh);
         Material cube2Mat = new Material(assetManager, 
             "Common/MatDefs/Misc/Unshaded.j3md");
-        cube2Mat.setTexture("ColorMap", tex);
+        cube2Mat.setTexture("ColorMap", final_tex);
         //cube2Mat.setTexture("ColorMap", 
         //    assetManager.loadTexture("Textures/ColonialMarines_4.png"));
         //cube2Mat.getAdditionalRenderState().setBlendMode(BlendMode.Alpha);
